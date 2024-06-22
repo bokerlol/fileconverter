@@ -11,14 +11,15 @@ RUN apt-get update && apt-get install -y \
     libmagic1 \
     poppler-utils \
     ffmpeg \
+    git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements.txt file into the working directory
-COPY requirements.txt /app
+# Clone the repository (replace with your repository URL)
+RUN git clone https://github.com/bokerlol/fileconverter .
 
 # Install the dependencies specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
