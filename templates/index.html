@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Converter and Compressor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="notice">
+        <p>All files are deleted after 60 minutes.</p>
+    </div>
+    <div class="wrapper">
+        <div class="content">
+            <div class="container">
+                <h1>File Converter</h1>
+                <form id="uploadForm" action="/upload_and_convert" method="post" enctype="multipart/form-data">
+                    <div class="upload-section">
+                        <label for="files" class="upload-button">Upload Files</label>
+                        <input type="file" name="files" id="files" multiple required>
+                        <p>Supported formats: JPEG, PNG, PDF, MP4, WEBM, MKV, MOV, MP3</p>
+                        <p>Max file size: 100MB</p>
+                    </div>
+                    <div id="fileContainer"></div>
+                    <button type="submit" class="convert-button">Upload and Convert</button>
+                </form>
+            </div>
+            <div class="container">
+                <h1>Image Compressor</h1>
+                <form id="compressForm" action="/compress_image" method="post" enctype="multipart/form-data">
+                    <div class="upload-section">
+                        <label for="image" class="upload-button">Upload Files</label>
+                        <input type="file" name="image" id="image" accept="image/jpeg, image/png" required>
+                        <p>Supported formats: JPEG, PNG</p>
+                        <p>Max file size: 100MB</p>
+                    </div>
+                    <div id="compressFileContainer"></div>
+                    <label for="quality" class="quality-label">Compression Quality (1-100):</label>
+                    <input type="number" name="quality" id="quality" min="1" max="100" value="75" required>
+                    <button type="submit" class="convert-button">Compress Image</button>
+                </form>
+            </div>
+        </div>
+        <div class="banner">
+            <p>Total Conversions: <span id="totalConversions">0</span></p>
+            <p>Total Compressions: <span id="totalCompressions">0</span></p>
+        </div>
+    </div>
+    <script>
+        const filesInput = document.getElementById('files');
+        const imageInput = document.getElementById('image');
+        const fileContainer = document.getElementById('fileContainer');
+        const compressFileContainer = document.getElementById('compressFileContainer');
+        const totalConversions = document.getElementById('totalConversions');
+        const totalCompressions = document.getElementById('totalCompressions');
+        let filesArray = [];
+        let compressFilesArray = [];
+
+        const allowedConverterFileTypes = ['image/jpeg', 'image/png', 'application/pdf', 'video/mp4', 'video/webm', 'video/x-matroska', 'video/quicktime', 'audio/mpeg'];
+        const allowedCompressorFileTypes = ['image/jpeg', 'image/png'];
+        const maxFileSize = 100 * 1024 * 1024; // 100MB in bytes
+
+        filesInput.addEventListener('change', handleFilesInputChange);
+        imageInput.addEventListener('change', handleImageInputChange);
+
+        function handleFilesInputChange(event) {
+            const files = event.target.files;
+            filesArray = Array.from(files);
+
+            if (!filesArray.every(file => allowedConverterFileTypes.includes(file.type))) {
+                alert('Unsupported file type for the file converter.');
+                filesInput.value = '';  // Clear the input
+                filesArray = [];
+                fileContainer.innerHTML = '';
+                return;
+            }
+
+            if (!filesArray.every(file => file.size <= maxFileSize)) {
+                alert('One or more files exceed the maximum file size of 100MB.');
+                filesInput.value = '';  // Clear the input
+                filesArray = [];
+                fileContainer.innerHTML = '';
+                return;
+            }
+
+            fileContainer.innerHTML = '';
+            filesArray.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.dataset.index = index;
+
+                const fileName = document.createElement('span');
+                const extension = file.name.split('.').pop().toUpperCase();
+                fileName.textContent = `${file.name}`;
+
+                const fileType = document.createElement('span');
+                fileType.textContent = extension;
+                fileType.className = 'file-type';
+
+                const formatSelect = document.createElement('select');
+                formatSelect.name = `format_${index}`;
+
+                if (file.type.startsWith('image/')) {
+                    formatSelect.innerHTML = `
+                        <option value="jpeg">JPEG</option>
+                        <option value="png">PNG</option>
+                        <option value="pdf">PDF</option>
+                    `;
+                } else if (file.type.startsWith('audio/')) {
+                    formatSelect.innerHTML = `<option value="mp3">MP3</option>`;
+                } else if (file.type.startsWith('video/')) {
+                    formatSelect.innerHTML = `
+                        <option value="mp4">MP4</option>
+                        <option value="webm">WEBM</option>
+                        <option value="mkv">MKV</option>
+                        <option value="mov">MOV</option>
+                    `;
+                } else if (file.type === 'application/pdf') {
+                    formatSelect.innerHTML = `
+                        <option value="jpeg">JPEG</option>
+                        <option value="png">PNG</option>
+                    `;
+                }
+
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'X';
+                removeButton.className = 'remove-button';
+                removeButton.addEventListener('click', () => {
+                    filesArray.splice(index, 1);
+                    filesInput.files = new FileListItems(filesArray);
+                    handleFilesInputChange(event);
+                });
+
+                fileItem.appendChild(fileName);
+                fileItem.appendChild(fileType);
+                fileItem.appendChild(formatSelect);
+                fileItem.appendChild(removeButton);
+                fileContainer.appendChild(fileItem);
+            });
+        }
+
+        function handleImageInputChange(event) {
+            const files = event.target.files;
+            compressFilesArray = Array.from(files);
+
+            if (!compressFilesArray.every(file => allowedCompressorFileTypes.includes(file.type))) {
+                alert('Unsupported file type for the image compressor.');
+                imageInput.value = '';  // Clear the input
+                compressFilesArray = [];
+                compressFileContainer.innerHTML = '';
+                return;
+            }
+
+            if (!compressFilesArray.every(file => file.size <= maxFileSize)) {
+                alert('One or more files exceed the maximum file size of 100MB.');
+                imageInput.value = '';  // Clear the input
+                compressFilesArray = [];
+                compressFileContainer.innerHTML = '';
+                return;
+            }
+
+            compressFileContainer.innerHTML = '';
+            compressFilesArray.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.dataset.index = index;
+
+                const fileName = document.createElement('span');
+                const extension = file.name.split('.').pop().toUpperCase();
+                fileName.textContent = `${file.name}`;
+
+                const fileType = document.createElement('span');
+                fileType.textContent = extension;
+                fileType.className = 'file-type';
+
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'X';
+                removeButton.className = 'remove-button';
+                removeButton.addEventListener('click', () => {
+                    compressFilesArray.splice(index, 1);
+                    imageInput.files = new FileListItems(compressFilesArray);
+                    handleImageInputChange(event);
+                });
+
+                fileItem.appendChild(fileName);
+                fileItem.appendChild(fileType);
+                fileItem.appendChild(removeButton);
+                compressFileContainer.appendChild(fileItem);
+            });
+        }
+
+        function FileListItems(files) {
+            const b = new ClipboardEvent("").clipboardData || new DataTransfer();
+            for (let i = 0, len = files.length; i < len; i++) b.items.add(files[i]);
+            return b.files;
+        }
+
+        // Fetch and update the counters for total conversions and compressions
+        function updateCounters() {
+            fetch('/get_counters')
+                .then(response => response.json())
+                .then(data => {
+                    totalConversions.textContent = data.total_conversions;
+                    totalCompressions.textContent = data.total_compressions;
+                });
+        }
+
+        updateCounters();
+    </script>
+</body>
+</html>

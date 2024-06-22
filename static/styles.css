@@ -1,0 +1,170 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url('https://upload.boker.xyz/u/image%281%29-min.png') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.notice {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 90%;  /* Set to 90% of the screen width */
+    max-width: 400px;
+    margin: 10px;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;  /* Ensure it takes full width of the screen */
+    max-width: 1200px;  /* Optional: constrain the maximum width for large screens */
+    padding: 10px; /* Added padding for better spacing on smaller screens */
+}
+
+.content {
+    display: flex;
+    flex-direction: column;  /* Stack containers vertically */
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;  /* Ensure it takes full width of the screen */
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 90%;  /* Set to 90% of the screen width */
+    max-width: 400px;
+    margin: 10px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.upload-section {
+    margin-bottom: 20px;
+}
+
+.upload-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.upload-button:hover {
+    background-color: #45a049;
+}
+
+#files, #image {
+    display: none;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.file-item span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+
+.file-item .file-type {
+    margin-right: 10px;
+    color: #555;
+}
+
+.file-item select {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.remove-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.convert-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+    border: none;
+    font-size: 16px;
+}
+
+.convert-button:hover {
+    background-color: #45a049;
+}
+
+.quality-label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+#quality {
+    margin-bottom: 20px;  /* Added space below the quality input */
+}
+
+.banner {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 90%;  /* Set to 90% of the screen width */
+    max-width: 400px;
+    margin: 10px;
+}
+
+.banner p {
+    margin: 5px 0;
+    width: 100%;  /* Ensure each paragraph takes full width */
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .content {
+        flex-direction: row;  /* Arrange containers horizontally on larger screens */
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+}
